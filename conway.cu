@@ -128,6 +128,7 @@ int main()
                 count++;
             }
         }
+        to_bitmap(step);
         printf("%d\n", count);
         sleep(1);
         next_generation();
