@@ -1,0 +1,14 @@
+RULES:
+1. Any live cell with two or three live neighbours survives.
+2. Any dead cell with three live neighbours becomes a live cell.
+3. All other live cells die in the next generation. Similarly, all other dead cells stay dead.
+
+THOUGHTS:
+- make it run at 60fps? so there are 60 'ticks' per second
+- what the fuck do i use to render the graphics
+  -> try tigr on windows, if that doesn't work either then just try something else
+
+PARALLEL THOUGHTS:
+- parallel by default
+- command line option for serial
+
