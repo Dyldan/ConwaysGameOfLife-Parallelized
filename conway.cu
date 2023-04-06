@@ -3,8 +3,11 @@
 #include <unistd.h>
 
 #include "conway.h"
+#include "bitmap.h"
 
 #define CELL_COUNT 10000
+#define WIDTH      100
+#define HEIGHT     100
 
 cell_t cells[CELL_COUNT];
 
@@ -92,12 +95,21 @@ void construct_starting_cond()
 }
 
 /**
+ * Gets correct name for new image and sends to the save_bitmap function
+*/
+void to_bitmap(int step) {
+    static char filename[32];
+    snprintf(filename, 16, "step-%d.bmp", step);
+    save_bitmap(filename, CELL_COUNT, WIDTH, HEIGHT, cells);
+}
+
+/**
  * Main.
  */
 int main()
 {
     construct_starting_cond();
-
+    int step = 0;
     while (true) {
         // for (int i = 0; i < CELL_COUNT; i++) {
         //     if (i % 100 == 0) {
@@ -119,6 +131,7 @@ int main()
         printf("%d\n", count);
         sleep(1);
         next_generation();
+        step++;
     }
 
     return EXIT_SUCCESS;
