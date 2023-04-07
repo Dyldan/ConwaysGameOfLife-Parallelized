@@ -14,3 +14,4 @@ conway_cuda: conway.cu
 
 clean:
 	rm -f $(TARGETS)
+	rm -f *.bmp
