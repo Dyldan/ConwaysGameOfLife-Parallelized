@@ -5,7 +5,7 @@ RULES:
 
 THOUGHTS:
 - make it run at 60fps? so there are 60 'ticks' per second
-- what the fuck do i use to render the graphics
+- what the heck do i use to render the graphics
   -> try tigr on windows, if that doesn't work either then just try something else
 
 PARALLEL THOUGHTS:

@@ -4,11 +4,8 @@
 #include <time.h>
 
 #include "conway.h"
-#include "bitmap.h"
 
 #define CELL_COUNT 10000
-#define WIDTH      100
-#define HEIGHT     100
 
 cell_t cells[CELL_COUNT];
 
@@ -22,7 +19,7 @@ int count_alive_neighbors(cell_t cell, int index)
     if (index >= 100 && cells[index - 100].alive) { // NORTH
         count++;
     }
-    
+
     if (index <= 9899 && cells[index + 100].alive) { // SOUTH
         count++;
     }
@@ -66,7 +63,7 @@ void next_generation() // TODO have it return error checking code
     // calculate next generation
     for (int i = 0; i < CELL_COUNT; i++) {
         int num_alive_neighbors = count_alive_neighbors(cells[i], i);
-      
+
         if (cells[i].alive && num_alive_neighbors == 2 || num_alive_neighbors == 3) {   // RULE 1
             cells[i].will_survive = true;
         } else if (!cells[i].alive && num_alive_neighbors == 3) { // RULE 2
@@ -106,36 +103,25 @@ void construct_starting_cond()
     next_generation();
 }
 
-
-/**
- * Gets correct name for new image and sends to the save_bitmap function
-*/
-void to_bitmap(int step) {
-    static char filename[32];
-    snprintf(filename, 16, "step-%d.bmp", step);
-    save_bitmap(filename, CELL_COUNT, WIDTH, HEIGHT, cells);
-}
-
 /**
  * Main.
  */
 int main()
 {
     construct_starting_cond();
-    int step = 0;
+
     while (true) {
-        // for (int i = 0; i < CELL_COUNT; i++) {
-        //     if (i % 100 == 0) {
-        //         printf("\n");
-        //     }
-        //     if (cells[i].alive) {
-        //         printf("x");
-        //     } else {
-        //         printf(" ");
-        //     }
-        // }
-        to_bitmap(step);
-        // printf("\n\n\n\n\n");
+        for (int i = 0; i < CELL_COUNT; i++) {
+            if (i % 100 == 0) {
+                printf("\n");
+            }
+            if (cells[i].alive) {
+                printf("x");
+            } else {
+                printf(" ");
+            }
+        }
+        printf("\n\n\n\n\n");
         // int count = 0;
         // for (int i = 0; i< CELL_COUNT; i++) {
         //     if (cells[i].alive) {
@@ -145,7 +131,6 @@ int main()
         // printf("%d\n", count);
         sleep(1);
         next_generation();
-        step++;
     }
 
     return EXIT_SUCCESS;
