@@ -6,15 +6,14 @@ TARGETS=conway_ser
 
 all: $(TARGETS)
 
-# greyblur_serial: greyblur.c
-# 	$(CC) $(CFLAGS) -o $@ $< $(LIB)
+
 
 conway_ser: conway.c
 	gcc -o conway_ser conway.c
 
-# conway_cuda: conway.cu
-# 	nvcc $(NFLAGS) -o $@ $< $(LIB)
+conway_cuda: conway.cu
+	nvcc $(NFLAGS) -o $@ $< $(LIB)
 
 clean:
 	rm -f $(TARGETS)
-	rm -f *.bmp
+	rm -f output/*.ppm
