@@ -139,7 +139,6 @@ int main(int argc, char *argv[])
         next_generation();
         clock_t end_time = clock();
         times[step] = end_time - start_time;
-        step++;
     }
 
     for (int i = 0; i < step_count-1; i++) {
