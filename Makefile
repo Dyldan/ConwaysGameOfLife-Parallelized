@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-g -Wall --std=c99 -Wno-unknown-pragmas -O3
 NFLAGS=-ccbin $(CC) -g -O3
 LIB=-lm
-TARGETS=conway_ser
+TARGETS=conway_ser conway_cuda
 
 all: $(TARGETS)
 
