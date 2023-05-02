@@ -4,13 +4,14 @@
 #include <time.h>
 
 #include "conway.h"
-#include "bitmap.h"
+#include "ppm.h"
 
-#define CELL_COUNT 10000
-#define WIDTH      100
-#define HEIGHT     100
+#define DEF_STEPS   100
 
-cell_t cells[CELL_COUNT];
+int height;
+int width;
+int cell_count;
+cell_t *cells;
 
 /**
  * Returns the amount of alive cells that neighbor the given cell (max 8).
@@ -64,7 +65,7 @@ int count_alive_neighbors(cell_t cell, int index)
 void next_generation() // TODO have it return error checking code
 {
     // calculate next generation
-    for (int i = 0; i < CELL_COUNT; i++) {
+    for (int i = 0; i < cell_count; i++) {
         int num_alive_neighbors = count_alive_neighbors(cells[i], i);
 
         if (cells[i].alive && num_alive_neighbors == 2 || num_alive_neighbors == 3) {   // RULE 1
@@ -77,7 +78,7 @@ void next_generation() // TODO have it return error checking code
     }
 
     // construct next generation
-    for (int i = 0; i < CELL_COUNT; i++) {
+    for (int i = 0; i < cell_count; i++) {
         if (cells[i].will_survive) {
             cells[i].alive = true;
         } else {
@@ -87,12 +88,12 @@ void next_generation() // TODO have it return error checking code
 }
 
 /**
- * Gets correct name for new image and sends to the save_bitmap function
+ * Gets correct name for new image and sends to the save_ppm function
 */
-void to_bitmap(int step) {
-    static char filename[32];
-    snprintf(filename, 16, "step-%d.bmp", step);
-    save_bitmap(filename, CELL_COUNT, WIDTH, HEIGHT, cells);
+void to_ppm(int step) {
+    static char filename[64];
+    snprintf(filename, 64, "output/step-%05d.ppm", step);
+    save_ppm(filename, width, height, cells);
 }
 
 /**
@@ -101,51 +102,58 @@ void to_bitmap(int step) {
  */
 void construct_starting_cond()
 {
-    time_t t;
-    srand((unsigned) time(&t));
-
-    for (int i = 0; i < CELL_COUNT; i++) {
-        if (rand() % CELL_COUNT < 1000) {
+    for (int i = 0; i < cell_count; i++) {
+        if (rand() % cell_count < 1000) {
             cells[i].alive = true;
         } else {
             cells[i].alive = false;
         }
     }
-
-    next_generation();
 }
 
 /**
  * Main.
  */
-int main()
+int main(int argc, char *argv[])
 {
-    construct_starting_cond();
-    int step = 0;
-    while (true) {
-        for (int i = 0; i < CELL_COUNT; i++) {
-            if (i % 100 == 0) {
-                printf("\n");
-            }
-            if (cells[i].alive) {
-                printf("x");
-            } else {
-                printf(" ");
-            }
-        }
-        printf("\n\n\n\n\n");
-        // int count = 0;
-        // for (int i = 0; i< CELL_COUNT; i++) {
-        //     if (cells[i].alive) {
-        //         count++;
-        //     }
-        // }
-        to_bitmap(step);
-        printf("%d\n", count);
-        sleep(1);
-        next_generation();
-        step++;
+    if (argc > 4) {
+        printf("Usage: %s <height> <width> [nsteps]\n", argv[0]);
+        return EXIT_FAILURE;
     }
 
+    height = strtol(argv[1], NULL, 10);
+    width = strtol(argv[2], NULL, 10);
+
+    int step_count = DEF_STEPS;
+    if (argc == 4) {
+        step_count = strtol(argv[3], NULL, 10);
+    }
+
+    cell_count = height * width;
+    cells = calloc(cell_count, sizeof(cell_t));
+
+    time_t *times;
+    times = calloc(step_count, sizeof(time_t));
+
+    construct_starting_cond();
+    clock_t start_time = clock();
+    next_generation();
+    clock_t end_time = clock();
+    times[0] = end_time - start_time;
+
+    for (int step = 1; step < step_count; step++) {
+        to_ppm(step);
+        clock_t start_time = clock();
+        next_generation();
+        clock_t end_time = clock();
+        times[step] = end_time - start_time;
+    }
+
+    for (int i = 0; i < step_count-1; i++) {
+        printf("%ld, ", times[i]);
+    }
+    printf("%ld\n", times[step_count-1]);
+    free(times);
+    free(cells);
     return EXIT_SUCCESS;
 }
