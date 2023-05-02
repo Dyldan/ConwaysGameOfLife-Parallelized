@@ -92,7 +92,7 @@ void next_generation() // TODO have it return error checking code
 */
 void to_ppm(int step) {
     static char filename[64];
-    snprintf(filename, 64, "output/step-%04d.ppm", step);
+    snprintf(filename, 64, "output/step-%05d.ppm", step);
     save_ppm(filename, width, height, cells);
 }
 
