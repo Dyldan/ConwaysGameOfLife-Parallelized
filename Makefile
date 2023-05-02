@@ -14,6 +14,12 @@ conway_ser: conway.c
 conway_cuda: conway.cu
 	nvcc $(NFLAGS) -o $@ $< $(LIB)
 
+convert: output/*.ppm
+	convert -delay 10 -loop 1 output/*.ppm animation.gif
+
 clean:
 	rm -f $(TARGETS)
 	rm -f output/*.ppm
+	rm -f animation.gif
+	rm -f serial_timings/*
+	rm -f parallel_timings/*
