@@ -6,12 +6,12 @@
 #include "conway.h"
 #include "ppm.h"
 
-#define CELL_COUNT  10000
-#define WIDTH       100
-#define HEIGHT      100
-#define MAX_STEPS   100
+#define DEF_STEPS   100
 
-cell_t cells[CELL_COUNT];
+int height;
+int width;
+int cell_count;
+cell_t *cells;
 
 /**
  * Returns the amount of alive cells that neighbor the given cell (max 8).
@@ -65,7 +65,7 @@ int count_alive_neighbors(cell_t cell, int index)
 void next_generation() // TODO have it return error checking code
 {
     // calculate next generation
-    for (int i = 0; i < CELL_COUNT; i++) {
+    for (int i = 0; i < cell_count; i++) {
         int num_alive_neighbors = count_alive_neighbors(cells[i], i);
 
         if (cells[i].alive && num_alive_neighbors == 2 || num_alive_neighbors == 3) {   // RULE 1
@@ -78,7 +78,7 @@ void next_generation() // TODO have it return error checking code
     }
 
     // construct next generation
-    for (int i = 0; i < CELL_COUNT; i++) {
+    for (int i = 0; i < cell_count; i++) {
         if (cells[i].will_survive) {
             cells[i].alive = true;
         } else {
@@ -93,7 +93,7 @@ void next_generation() // TODO have it return error checking code
 void to_ppm(int step) {
     static char filename[64];
     snprintf(filename, 64, "output/step-%04d.ppm", step);
-    save_ppm(filename, WIDTH, HEIGHT, cells);
+    save_ppm(filename, width, height, cells);
 }
 
 /**
@@ -102,8 +102,8 @@ void to_ppm(int step) {
  */
 void construct_starting_cond()
 {
-    for (int i = 0; i < CELL_COUNT; i++) {
-        if (rand() % CELL_COUNT < 1000) {
+    for (int i = 0; i < cell_count; i++) {
+        if (rand() % cell_count < 1000) {
             cells[i].alive = true;
         } else {
             cells[i].alive = false;
@@ -116,14 +116,22 @@ void construct_starting_cond()
  */
 int main(int argc, char *argv[])
 {
-    if (argc > 2) {
-        printf("Usage: %s [nsteps]\n", argv[0]);
+    if (argc > 4) {
+        printf("Usage: %s <height> <width> [nsteps]\n", argv[0]);
         return EXIT_FAILURE;
     }
-    int step_count = MAX_STEPS;
-    if (argc == 2) {
-        step_count = strtol(argv[1], NULL, 10);
+
+    height = strtol(argv[1], NULL, 10);
+    width = strtol(argv[2], NULL, 10);
+
+    int step_count = DEF_STEPS;
+    if (argc == 4) {
+        step_count = strtol(argv[3], NULL, 10);
     }
+
+    cell_count = height * width;
+    cells = calloc(cell_count, sizeof(cell_t));
+
     time_t *times;
     times = calloc(step_count, sizeof(time_t));
 
@@ -146,5 +154,6 @@ int main(int argc, char *argv[])
     }
     printf("%ld\n", times[step_count-1]);
     free(times);
+    free(cells);
     return EXIT_SUCCESS;
 }
