@@ -142,9 +142,9 @@ int main(int argc, char *argv[])
     }
 
     for (int i = 0; i < step_count-1; i++) {
-        printf("%ld ms, ", times[i]);
+        printf("%ld, ", times[i]);
     }
-    printf("%ld ms\n", times[step_count-1]);
+    printf("%ld\n", times[step_count-1]);
     free(times);
     return EXIT_SUCCESS;
 }
