@@ -1,3 +1,5 @@
 conway_ser
 conway_cuda
 animation.gif
+output/*
+!output/output.txt
