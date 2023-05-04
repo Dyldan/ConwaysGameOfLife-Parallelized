@@ -171,6 +171,11 @@ int main(int argc, char *argv[])
         step_count = strtol(argv[3], NULL, 10);
     }
 
+    if (height == 0 || width == 0 || step_count == 0) {
+        printf("Usage: %s <height> <width> [nsteps]\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
     cell_count = height * width;
     cell_t *cells;
     cudaMallocManaged(&cells, sizeof(cell_t)*cell_count);

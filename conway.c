@@ -129,6 +129,11 @@ int main(int argc, char *argv[])
         step_count = strtol(argv[3], NULL, 10);
     }
 
+    if (height == 0 || width == 0 || step_count == 0) {
+        printf("Usage: %s <height> <width> [nsteps]\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
     cell_count = height * width;
     cells = calloc(cell_count, sizeof(cell_t));
 
