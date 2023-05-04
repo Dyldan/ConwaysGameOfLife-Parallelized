@@ -92,7 +92,7 @@ void next_generation() // TODO have it return error checking code
 */
 void to_ppm(int step) {
     static char filename[64];
-    snprintf(filename, 64, "output/step-%05d.ppm", step);
+    snprintf(filename, 64, "output/step-%05d.ppm", step); // TODO make sure output folder exists / create it
     save_ppm(filename, width, height, cells);
 }
 
@@ -116,7 +116,7 @@ void construct_starting_cond()
  */
 int main(int argc, char *argv[])
 {
-    if (argc > 4) {
+    if (argc > 4 || argc < 3) {
         printf("Usage: %s <height> <width> [nsteps]\n", argv[0]);
         return EXIT_FAILURE;
     }
@@ -134,7 +134,6 @@ int main(int argc, char *argv[])
 
     time_t *times;
     times = calloc(step_count, sizeof(time_t));
-
     construct_starting_cond();
     clock_t start_time = clock();
     next_generation();
