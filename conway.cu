@@ -158,7 +158,7 @@ void construct_starting_cond(cell_t *cells, int cell_count)
  */
 int main(int argc, char *argv[])
 {
-    if (argc > 4) {
+    if (argc > 4 || argc < 3) {
         printf("Usage: %s <height> <width> [nsteps]\n", argv[0]);
         return EXIT_FAILURE;
     }
