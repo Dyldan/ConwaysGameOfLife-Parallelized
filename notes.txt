@@ -4,8 +4,8 @@ RULES:
 3. All other live cells die in the next generation. Similarly, all other dead cells stay dead.
 
 TODO:
+- cuda version does not work
 - analysis
-- fix skipping first ppm
 right before submitting:
 - remove all commented code
 - remove all test print statements
