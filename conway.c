@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
+#include <sys/time.h>
 
 #include "conway.h"
 #include "ppm.h"
@@ -138,43 +139,45 @@ int main(int argc, char *argv[])
     cell_count = height * width;
     cells = calloc(cell_count, sizeof(cell_t));
 
-    time_t *times;
-    times = calloc(step_count+1, sizeof(time_t));
+    double *times;
+    times = calloc(step_count+1, sizeof(double));
 
-    clock_t start_time = clock();
+    double start_time;
+    double end_time;
+    start_time = clock();
     construct_starting_cond();
-    clock_t end_time = clock();
-    times[0] = end_time - start_time;
+    end_time = clock();
+    times[0] = (double)(end_time - start_time) / CLOCKS_PER_SEC;
     to_ppm(0);
 
     for (int step = 1; step <= step_count; step++) {
-        clock_t start_time = clock();
+        start_time = clock();
         next_generation();
-        clock_t end_time = clock();
-        times[step] = end_time - start_time;
+        end_time = clock();
+        times[step] = (double)(end_time - start_time) / CLOCKS_PER_SEC;
         to_ppm(step);
 
-        for (int i = 0; i < cell_count; i++) {
-            if (i % width == 0) {
-                printf("\n");
-            }
-            if (cells[i].alive) {
-                printf("x");
-            } else {
-                printf(" ");
-            }
-        }
-        printf("\n\n\n\n\n");
-        sleep(1);
+        // for (int i = 0; i < cell_count; i++) {
+        //     if (i % width == 0) {
+        //         printf("\n");
+        //     }
+        //     if (cells[i].alive) {
+        //         printf("x");
+        //     } else {
+        //         printf(" ");
+        //     }
+        // }
+        // printf("\n\n\n\n\n");
+        // sleep(1);
     }
 
     for (int i = 0; i <= step_count; i++) {
         if (i == 0) {
-            printf("%ld (base), ", times[i]);
+            printf("%f\n", times[i]);
         } else if (i == step_count) {
-            printf("%ld\n", times[i]);
+            printf("%f\n", times[i]);
         } else {
-            printf("%ld, ", times[i]);
+            printf("%f, ", times[i]);
         }
     }
     free(times);

@@ -83,7 +83,7 @@ void next_generation(cell_t *cells, int width, int height) // TODO have it retur
     }
 
     // construct next generation
-    for (int i = 0; i < width * height; i++) {
+    for (int i = index; i < width * height; i+= stride) {
         if (cells[i].will_survive) {
             cells[i].alive = true;
         } else {
@@ -163,23 +163,23 @@ int main(int argc, char *argv[])
         times[step] = GET_TIMER(generate);
         to_ppm(cells, step);
 
-        for (int i = 0; i < cell_count; i++) {
-            if (i % width == 0) {
-                printf("\n");
-            }
-            if (cells[i].alive) {
-                printf("x");
-            } else {
-                printf(" ");
-            }
-        }
-        printf("\n\n\n\n\n");
-        sleep(1);
+        // for (int i = 0; i < cell_count; i++) {
+        //     if (i % width == 0) {
+        //         printf("\n");
+        //     }
+        //     if (cells[i].alive) {
+        //         printf("x");
+        //     } else {
+        //         printf(" ");
+        //     }
+        // }
+        // printf("\n\n\n\n\n");
+        // sleep(1);
     }
 
     for (int i = 0; i <= step_count; i++) {
         if (i == 0) {
-            printf("%f (base), ", times[i]);
+            printf("%f\n", times[i]);
         } else if (i == step_count) {
             printf("%f\n", times[i]);
         } else {
