@@ -1,6 +1,8 @@
 /**
  * timer.h
  *
+ * ----- THIS FILE PROVIDED BY DR. LAM -----
+ *
  * Custom timing macros for serial/OpenMP programs. Uses omp_get_wtime() if
  * _OPENMP is defined and gettimeofday() otherwise.
  *
