@@ -16,7 +16,7 @@ cell_t *cells;
 /**
  * Returns the amount of alive cells that neighbor the given cell (max 8).
  */
-int count_alive_neighbors(cell_t cell, int index)
+int count_alive_neighbors(int index)
 {
     int count = 0;
 
@@ -66,7 +66,7 @@ void next_generation() // TODO have it return error checking code
 {
     // calculate next generation
     for (int i = 0; i < cell_count; i++) {
-        int num_alive_neighbors = count_alive_neighbors(cells[i], i);
+        int num_alive_neighbors = count_alive_neighbors(i);
 
         if (cells[i].alive && num_alive_neighbors == 2 || num_alive_neighbors == 3) {   // RULE 1
             cells[i].will_survive = true;
@@ -102,8 +102,9 @@ void to_ppm(int step) {
  */
 void construct_starting_cond()
 {
+    srand(time(NULL));
     for (int i = 0; i < cell_count; i++) {
-        if (rand() % cell_count < 1000) {
+        if (rand() % cell_count < (width*height) / 10) {
             cells[i].alive = true;
         } else {
             cells[i].alive = false;
@@ -154,7 +155,7 @@ int main(int argc, char *argv[])
         to_ppm(step);
 
         for (int i = 0; i < cell_count; i++) {
-            if (i % 100 == 0) {
+            if (i % width == 0) {
                 printf("\n");
             }
             if (cells[i].alive) {
