@@ -18,43 +18,7 @@ int cell_count;
  */
 // int count_alive_neighbors(cell_t *cells, int index)
 // {
-//     int x = index%width;
-//     int y = index/width;
-//     int count = 0;
-//     int north_west = (y-1) * width + (x-1);
-//     int north = (y-1) * width + x;
-//     int north_east = (y-1) * width + (x+1);
-//     int west = index - 1;
-//     int east = index + 1;
-//     int south_west = (y+1) * width + (x-1);
-//     int south = (y+1) * width + x;
-//     int south_east = (y-+1) * width + (x+1);
-
-//     if (y > 0) { // NORTH
-//         count++;
-//     } 
-//     if (y < height-1) { // SOUTH
-//         count++;
-//     } 
-//     if (x > 0) { // EAST
-//         count++;
-//     } 
-//     if (x < width - 1) { // WEST
-//         count++;
-//     } 
-//     if (x > 0 && y > 0) { // NEAST
-//         count++;
-//     } 
-//     if (x < width - 1 && y > 0) { // NWEST
-//         count++;
-//     } 
-//     if (x > 0 && y < height-1) { // SEAST
-//         count++;
-//     } 
-//     if (x < width - 1 && y < height-1) { // SWEST
-//         count++;
-//     } 
-
+//     
 //     return count;
 // }
 
@@ -70,44 +34,45 @@ void next_generation(cell_t *cells, int width, int height) // TODO have it retur
 {
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     int stride = blockDim.x * gridDim.x;
-    // calculate next generation
-    for (int i = index; i < width * height; i += stride) {
-        int x = i%width;
-        int y = i/width;
-        int count = 0;
-        int north_west = (y-1) * width + (x-1);
-        int north = (y-1) * width + x;
-        int north_east = (y-1) * width + (x+1);
-        int west = i - 1;
-        int east = i + 1;
-        int south_west = (y+1) * width + (x-1);
-        int south = (y+1) * width + x;
-        int south_east = (y-+1) * width + (x+1);
 
-        if (y > 0 && cells[north].alive) { // NORTH
+    // calculate next generation
+
+    int count = 0;
+
+    for (int i = index; i < width * height; i += stride) {
+
+        if (i >= width && cells[i - width].alive) { // NORTH
             count++;
-        } 
-        if (y < height-1 && cells[south].alive) { // SOUTH
+        }
+
+        if (i < (width * height) - width && cells[i + width].alive) { // SOUTH
             count++;
-        } 
-        if (x > 0 && cells[east].alive) { // EAST
+        }
+
+        if (i % width != 0 && cells[i - 1].alive) { // WEST
             count++;
-        } 
-        if (x < width - 1 && cells[west].alive) { // WEST
+        }
+
+        if (i % width != width-1 && cells[i + 1].alive) { // EAST
             count++;
-        } 
-        if (x > 0 && y > 0 && cells[north_east].alive) { // NEAST
+        }
+
+        if (i >= width && i % width != 0 && cells[i - (width+1)].alive) { // NORTH-WEST
             count++;
-        } 
-        if (x < width - 1 && y > 0 && cells[north_west].alive) { // NWEST
+        }
+
+        if (i >= width && i % width != width-1 && cells[i - (width-1)].alive) { // NORTH-EAST
             count++;
-        } 
-        if (x > 0 && y < height-1 && cells[south_east].alive) { // SEAST
+        }
+
+        if (i < (width * height) - width && i % width != 0 && cells[i + (width-1)].alive) { // SOUTH-WEST
             count++;
-        } 
-        if (x < width - 1 && y < height-1 && cells[south_west].alive) { // SWEST
+        }
+
+        if (i < (width * height) - width && i % width != width-1 && cells[i + (width+1)].alive) { // SOUTH-EAST
             count++;
-        } 
+        }
+
         int num_alive_neighbors = count;
 
         if (cells[i].alive && num_alive_neighbors == 2 || num_alive_neighbors == 3) {   // RULE 1
@@ -142,7 +107,7 @@ void to_ppm(cell_t *cells, int step) {
  * Construct the starting grid with ~25% chance of a given cell being
  * alive or dead. Then it invokes all 3 rules on the initial cells.
  */
-void construct_starting_cond(cell_t *cells, int cell_count)
+void construct_starting_cond(cell_t *cells)
 {
     for (int i = 0; i < cell_count; i++) {
         if (rand() % cell_count < 1000) {
@@ -187,7 +152,7 @@ int main(int argc, char *argv[])
     int blockCount = (cell_count + blockSize - 1) / blockSize;
 
     START_TIMER(generate)
-    construct_starting_cond(cells, cell_count);
+    construct_starting_cond(cells);
     STOP_TIMER(generate)
     times[0] = GET_TIMER(generate);
     to_ppm(cells, 0);
@@ -199,18 +164,18 @@ int main(int argc, char *argv[])
         times[step] = GET_TIMER(generate);
         to_ppm(cells, step);
 
-        // for (int i = 0; i < cell_count; i++) {
-        //     if (i % 100 == 0) {
-        //         printf("\n");
-        //     }
-        //     if (cells[i].alive) {
-        //         printf("x");
-        //     } else {
-        //         printf(" ");
-        //     }
-        // }
-        // printf("\n\n\n\n\n");
-        // sleep(1);
+        for (int i = 0; i < cell_count; i++) {
+            if (i % 100 == 0) {
+                printf("\n");
+            }
+            if (cells[i].alive) {
+                printf("x");
+            } else {
+                printf(" ");
+            }
+        }
+        printf("\n\n\n\n\n");
+        sleep(1);
     }
 
     for (int i = 0; i <= step_count; i++) {
