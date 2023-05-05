@@ -4,7 +4,7 @@ RULES:
 3. All other live cells die in the next generation. Similarly, all other dead cells stay dead.
 
 TODO:
-- cuda version does not work
+- make construct_starting_cond a kernel
 - analysis
 right before submitting:
 - remove all commented code
