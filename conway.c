@@ -138,25 +138,30 @@ int main(int argc, char *argv[])
     cells = calloc(cell_count, sizeof(cell_t));
 
     time_t *times;
-    times = calloc(step_count, sizeof(time_t));
-    construct_starting_cond();
+    times = calloc(step_count+1, sizeof(time_t));
     clock_t start_time = clock();
-    next_generation();
+    construct_starting_cond();
     clock_t end_time = clock();
     times[0] = end_time - start_time;
+    to_ppm(0);
 
-    for (int step = 1; step < step_count; step++) {
-        to_ppm(step);
+    for (int step = 1; step <= step_count; step++) {
         clock_t start_time = clock();
         next_generation();
         clock_t end_time = clock();
+        to_ppm(step);
         times[step] = end_time - start_time;
     }
 
-    for (int i = 0; i < step_count-1; i++) {
-        printf("%ld, ", times[i]);
+    for (int i = 0; i <= step_count; i++) {
+        if (i == 0) {
+            printf("%ld (base), ", times[i]);
+        } else if (i == step_count) {
+            printf("%ld\n", times[i]);
+        } else {
+            printf("%ld, ", times[i]);
+        }
     }
-    printf("%ld\n", times[step_count-1]);
     free(times);
     free(cells);
     return EXIT_SUCCESS;
