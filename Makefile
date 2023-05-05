@@ -23,3 +23,6 @@ clean:
 	rm -f animation.gif
 	rm -f serial_timings/*
 	rm -f parallel_timings/*
+
+ppm:
+	rm -f output/*.ppm
