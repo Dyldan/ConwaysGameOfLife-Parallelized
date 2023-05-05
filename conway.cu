@@ -16,11 +16,45 @@ int cell_count;
 /**
  * Returns the amount of alive cells that neighbor the given cell (max 8).
  */
-// int count_alive_neighbors(cell_t *cells, int index)
-// {
-//     
-//     return count;
-// }
+__device__
+int count_alive_neighbors(int width, int height, cell_t *cells, int i)
+{
+    int count = 0;
+    
+    if (i >= width && cells[i - width].alive) { // NORTH
+        count++;
+    }
+
+    if (i < (width * height) - width && cells[i + width].alive) { // SOUTH
+        count++;
+    }
+
+    if (i % width != 0 && cells[i - 1].alive) { // WEST
+        count++;
+    }
+
+    if (i % width != width-1 && cells[i + 1].alive) { // EAST
+        count++;
+    }
+
+    if (i >= width && i % width != 0 && cells[i - (width+1)].alive) { // NORTH-WEST
+        count++;
+    }
+
+    if (i >= width && i % width != width-1 && cells[i - (width-1)].alive) { // NORTH-EAST
+        count++;
+    }
+
+    if (i < (width * height) - width && i % width != 0 && cells[i + (width-1)].alive) { // SOUTH-WEST
+        count++;
+    }
+
+    if (i < (width * height) - width && i % width != width-1 && cells[i + (width+1)].alive) { // SOUTH-EAST
+        count++;
+    }
+
+    return count;
+}
 
 /**
  * Spawn the next generation based on the 3 (4 unsimplified) rules.
@@ -36,44 +70,8 @@ void next_generation(cell_t *cells, int width, int height) // TODO have it retur
     int stride = blockDim.x * gridDim.x;
 
     // calculate next generation
-
-    int count = 0;
-
     for (int i = index; i < width * height; i += stride) {
-
-        if (i >= width && cells[i - width].alive) { // NORTH
-            count++;
-        }
-
-        if (i < (width * height) - width && cells[i + width].alive) { // SOUTH
-            count++;
-        }
-
-        if (i % width != 0 && cells[i - 1].alive) { // WEST
-            count++;
-        }
-
-        if (i % width != width-1 && cells[i + 1].alive) { // EAST
-            count++;
-        }
-
-        if (i >= width && i % width != 0 && cells[i - (width+1)].alive) { // NORTH-WEST
-            count++;
-        }
-
-        if (i >= width && i % width != width-1 && cells[i - (width-1)].alive) { // NORTH-EAST
-            count++;
-        }
-
-        if (i < (width * height) - width && i % width != 0 && cells[i + (width-1)].alive) { // SOUTH-WEST
-            count++;
-        }
-
-        if (i < (width * height) - width && i % width != width-1 && cells[i + (width+1)].alive) { // SOUTH-EAST
-            count++;
-        }
-
-        int num_alive_neighbors = count;
+        int num_alive_neighbors = count_alive_neighbors(width, height, cells, i);
 
         if (cells[i].alive && num_alive_neighbors == 2 || num_alive_neighbors == 3) {   // RULE 1
             cells[i].will_survive = true;
@@ -109,8 +107,9 @@ void to_ppm(cell_t *cells, int step) {
  */
 void construct_starting_cond(cell_t *cells)
 {
+    srand(time(NULL));
     for (int i = 0; i < cell_count; i++) {
-        if (rand() % cell_count < 1000) {
+        if (rand() % cell_count < (width*height) / 10) {
             cells[i].alive = true;
         } else {
             cells[i].alive = false;
@@ -165,7 +164,7 @@ int main(int argc, char *argv[])
         to_ppm(cells, step);
 
         for (int i = 0; i < cell_count; i++) {
-            if (i % 100 == 0) {
+            if (i % width == 0) {
                 printf("\n");
             }
             if (cells[i].alive) {
