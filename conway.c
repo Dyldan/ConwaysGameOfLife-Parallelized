@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <sys/time.h>
+#include <sys/stat.h>
 
 #include "conway.h"
 #include "ppm.h"
@@ -103,6 +104,10 @@ void to_ppm(int step) {
  */
 void construct_starting_cond()
 {
+    struct stat st = {0};
+    if (stat("output/", &st) == -1 ) {
+        mkdir("output/", 0700);
+    }
     srand(time(NULL));
     for (int i = 0; i < cell_count; i++) {
         if (rand() % cell_count < (width*height) / 10) {
