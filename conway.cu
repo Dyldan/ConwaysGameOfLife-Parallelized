@@ -181,29 +181,47 @@ int main(int argc, char *argv[])
     cudaMallocManaged(&cells, sizeof(cell_t)*cell_count);
 
     float *times;
-    cudaMallocManaged(&times, sizeof(time_t)*step_count);
+    cudaMallocManaged(&times, sizeof(time_t)*(step_count+1));
 
     int blockSize = 1024;
     int blockCount = (cell_count + blockSize - 1) / blockSize;
-    construct_starting_cond(cells, cell_count);
 
     START_TIMER(generate)
-    next_generation<<<blockCount, blockSize>>>(cells, width, height);
+    construct_starting_cond(cells, cell_count);
     STOP_TIMER(generate)
     times[0] = GET_TIMER(generate);
+    to_ppm(cells, 0);
 
-    for (int step = 1; step < step_count; step++) {
-        to_ppm(cells, step);
+    for (int step = 1; step <= step_count; step++) {
         START_TIMER(generate)
         next_generation<<<blockCount, blockSize>>>(cells, width, height);
         STOP_TIMER(generate)
         times[step] = GET_TIMER(generate);
+        to_ppm(cells, step);
+
+        // for (int i = 0; i < cell_count; i++) {
+        //     if (i % 100 == 0) {
+        //         printf("\n");
+        //     }
+        //     if (cells[i].alive) {
+        //         printf("x");
+        //     } else {
+        //         printf(" ");
+        //     }
+        // }
+        // printf("\n\n\n\n\n");
+        // sleep(1);
     }
 
-    for (int i = 0; i < step_count-1; i++) {
-        printf("%f, ", times[i]);
+    for (int i = 0; i <= step_count; i++) {
+        if (i == 0) {
+            printf("%f (base), ", times[i]);
+        } else if (i == step_count) {
+            printf("%f\n", times[i]);
+        } else {
+            printf("%f, ", times[i]);
+        }
     }
-    printf("%f\n", times[step_count-1]);
     cudaFree(times);
     cudaFree(cells);
     return EXIT_SUCCESS;
