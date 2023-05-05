@@ -20,35 +20,35 @@ int count_alive_neighbors(cell_t cell, int index)
 {
     int count = 0;
 
-    if (index >= 100 && cells[index - 100].alive) { // NORTH
+    if (index >= width && cells[index - width].alive) { // NORTH
         count++;
     }
 
-    if (index <= 9899 && cells[index + 100].alive) { // SOUTH
+    if (index < cell_count - width && cells[index + width].alive) { // SOUTH
         count++;
     }
 
-    if (index % 100 != 0 && cells[index - 1].alive) { // WEST
+    if (index % width != 0 && cells[index - 1].alive) { // WEST
         count++;
     }
 
-    if (index % 100 != 99 && cells[index + 1].alive) { // EAST
+    if (index % width != width-1 && cells[index + 1].alive) { // EAST
         count++;
     }
 
-    if (index >= 100 && index % 100 != 0 && cells[index - 101].alive) { // NORTH-WEST
+    if (index >= width && index % width != 0 && cells[index - (width+1)].alive) { // NORTH-WEST
         count++;
     }
 
-    if (index >= 100 && index % 100 != 99 && cells[index - 99].alive) { // NORTH-EAST
+    if (index >= width && index % width != width-1 && cells[index - (width-1)].alive) { // NORTH-EAST
         count++;
     }
 
-    if (index <= 9899 && index % 100 != 0 && cells[index + 99].alive) { // SOUTH-WEST
+    if (index < cell_count - width && index % width != 0 && cells[index + (width-1)].alive) { // SOUTH-WEST
         count++;
     }
 
-    if (index <= 9899 && index % 100 != 99 && cells[index + 101].alive) { // SOUTH-EAST
+    if (index < cell_count - width && index % width != width-1 && cells[index + (width+1)].alive) { // SOUTH-EAST
         count++;
     }
 
@@ -152,6 +152,19 @@ int main(int argc, char *argv[])
         clock_t end_time = clock();
         times[step] = end_time - start_time;
         to_ppm(step);
+
+        for (int i = 0; i < cell_count; i++) {
+            if (i % 100 == 0) {
+                printf("\n");
+            }
+            if (cells[i].alive) {
+                printf("x");
+            } else {
+                printf(" ");
+            }
+        }
+        printf("\n\n\n\n\n");
+        sleep(1);
     }
 
     for (int i = 0; i <= step_count; i++) {
