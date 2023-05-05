@@ -1,11 +1,6 @@
-RULES:
-1. Any live cell with two or three live neighbours survives.
-2. Any dead cell with three live neighbours becomes a live cell.
-3. All other live cells die in the next generation. Similarly, all other dead cells stay dead.
 
 TODO:
 - make construct_starting_cond a kernel
-- analysis
 right before submitting:
 - remove all commented code
 - remove all test print statements

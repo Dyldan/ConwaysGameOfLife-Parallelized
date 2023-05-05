@@ -161,19 +161,6 @@ int main(int argc, char *argv[])
         end_time = clock();
         times[step] = (double)(end_time - start_time) / CLOCKS_PER_SEC;
         to_ppm(step);
-
-        // for (int i = 0; i < cell_count; i++) {
-        //     if (i % width == 0) {
-        //         printf("\n");
-        //     }
-        //     if (cells[i].alive) {
-        //         printf("x");
-        //     } else {
-        //         printf(" ");
-        //     }
-        // }
-        // printf("\n\n\n\n\n");
-        // sleep(1);
     }
 
     for (int i = 0; i <= step_count; i++) {
