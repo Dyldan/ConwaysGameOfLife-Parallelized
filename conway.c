@@ -139,6 +139,7 @@ int main(int argc, char *argv[])
 
     time_t *times;
     times = calloc(step_count+1, sizeof(time_t));
+
     clock_t start_time = clock();
     construct_starting_cond();
     clock_t end_time = clock();
@@ -149,8 +150,8 @@ int main(int argc, char *argv[])
         clock_t start_time = clock();
         next_generation();
         clock_t end_time = clock();
-        to_ppm(step);
         times[step] = end_time - start_time;
+        to_ppm(step);
     }
 
     for (int i = 0; i <= step_count; i++) {
