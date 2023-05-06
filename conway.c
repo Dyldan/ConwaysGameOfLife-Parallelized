@@ -63,6 +63,8 @@ int count_alive_neighbors(int index)
  * 1. Any live cell with two or three live neighbours survives.
  * 2. Any dead cell with three live neighbours becomes a live cell.
  * 3. All other live cells die in the next generation. Similarly, all other dead cells stay dead.
+ * 4. [CUSTOM] Any live cell with 5 live neighbors survives.
+ * 5. [CUSTOM] Any dead cell with 5 live neighbors becomes a live cell.
  */
 void next_generation() // TODO have it return error checking code
 {
@@ -73,6 +75,10 @@ void next_generation() // TODO have it return error checking code
         if (cells[i].alive && num_alive_neighbors == 2 || num_alive_neighbors == 3) {   // RULE 1
             cells[i].will_survive = true;
         } else if (!cells[i].alive && num_alive_neighbors == 3) { // RULE 2
+            cells[i].will_survive = true;
+        } else if (cells[i].alive && num_alive_neighbors == 5) { // CUSTOM RULE 4
+            cells[i].will_survive = true;
+        } else if (!cells[i].alive && num_alive_neighbors == 5) { // CUSTOME RULE 5
             cells[i].will_survive = true;
         } else { // RULE 3
             cells[i].will_survive = false;

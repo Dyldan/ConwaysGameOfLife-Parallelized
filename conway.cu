@@ -63,6 +63,8 @@ int count_alive_neighbors(int width, int height, cell_t *cells, int i)
  * 1. Any live cell with two or three live neighbours survives.
  * 2. Any dead cell with three live neighbours becomes a live cell.
  * 3. All other live cells die in the next generation. Similarly, all other dead cells stay dead.
+ * 4. [CUSTOM] Any live cell with 5 live neighbors survives.
+ * 5. [CUSTOM] Any dead cell with 5 live neighbors becomes a live cell.
  */
 __global__
 void next_generation(cell_t *cells, int width, int height) // TODO have it return error checking code
@@ -77,6 +79,10 @@ void next_generation(cell_t *cells, int width, int height) // TODO have it retur
         if (cells[i].alive && num_alive_neighbors == 2 || num_alive_neighbors == 3) {   // RULE 1
             cells[i].will_survive = true;
         } else if (!cells[i].alive && num_alive_neighbors == 3) { // RULE 2
+            cells[i].will_survive = true;
+        } else if (cells[i].alive && num_alive_neighbors == 5) { // CUSTOM RULE 4
+            cells[i].will_survive = true;
+        } else if (!cells[i].alive && num_alive_neighbors == 5) { // CUSTOME RULE 5
             cells[i].will_survive = true;
         } else { // RULE 3
             cells[i].will_survive = false;
@@ -167,19 +173,6 @@ int main(int argc, char *argv[])
         STOP_TIMER(generate)
         times[step] = GET_TIMER(generate);
         to_ppm(cells, step);
-
-        // for (int i = 0; i < cell_count; i++) {
-        //     if (i % width == 0) {
-        //         printf("\n");
-        //     }
-        //     if (cells[i].alive) {
-        //         printf("x");
-        //     } else {
-        //         printf(" ");
-        //     }
-        // }
-        // printf("\n\n\n\n\n");
-        // sleep(1);
     }
 
     for (int i = 0; i <= step_count; i++) {
