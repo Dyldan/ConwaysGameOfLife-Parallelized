@@ -1,9 +1,0 @@
-
-right before submitting:
-- remove all commented code
-- remove all test print statements
-- remove all todo comments
-- check for any forbidden functions
-- comment code appropriately
-- update code formatting
-

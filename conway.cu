@@ -67,7 +67,7 @@ int count_alive_neighbors(int width, int height, cell_t *cells, int i)
  * 5. [CUSTOM] Any dead cell with 5 live neighbors becomes a live cell.
  */
 __global__
-void next_generation(cell_t *cells, int width, int height) // TODO have it return error checking code
+void next_generation(cell_t *cells, int width, int height)
 {
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     int stride = blockDim.x * gridDim.x;
@@ -133,6 +133,7 @@ void construct_starting_cond(cell_t *cells)
  */
 int main(int argc, char *argv[])
 {
+    // Argument Handling
     if (argc > 4 || argc < 3) {
         printf("Usage: %s <height> <width> [nsteps]\n", argv[0]);
         return EXIT_FAILURE;
@@ -141,16 +142,19 @@ int main(int argc, char *argv[])
     height = strtol(argv[1], NULL, 10);
     width = strtol(argv[2], NULL, 10);
 
+    // Init optional step count
     int step_count = DEF_STEPS;
     if (argc == 4) {
         step_count = strtol(argv[3], NULL, 10);
     }
 
+    // Verify command line args
     if (height == 0 || width == 0 || step_count == 0) {
         printf("Usage: %s <height> <width> [nsteps]\n", argv[0]);
         return EXIT_FAILURE;
     }
 
+    // Init variables
     cell_count = height * width;
     cell_t *cells;
     cudaMallocManaged(&cells, sizeof(cell_t)*cell_count);
@@ -161,12 +165,14 @@ int main(int argc, char *argv[])
     int blockSize = 1024;
     int blockCount = (cell_count + blockSize - 1) / blockSize;
 
+    // Construct genesis generation
     START_TIMER(generate)
     construct_starting_cond(cells);
     STOP_TIMER(generate)
     times[0] = GET_TIMER(generate);
     to_ppm(cells, 0);
 
+    // Main program loop - construct each generation one at a time
     for (int step = 1; step <= step_count; step++) {
         START_TIMER(generate)
         next_generation<<<blockCount, blockSize>>>(cells, width, height);
@@ -175,6 +181,7 @@ int main(int argc, char *argv[])
         to_ppm(cells, step);
     }
 
+    // Print timing output
     for (int i = 0; i <= step_count; i++) {
         if (i == 0) {
             printf("%f\n", times[i]);
@@ -184,6 +191,8 @@ int main(int argc, char *argv[])
             printf("%f, ", times[i]);
         }
     }
+
+    // Clean up and exit
     cudaFree(times);
     cudaFree(cells);
     return EXIT_SUCCESS;

@@ -5,6 +5,9 @@
 #include <stdbool.h>
 #include <string.h>
 
+/**
+ * Save generation as a .ppm file
+ */
 void save_ppm(const char *file_name, int width, int height, cell_t* cell_data)
 {
     FILE *fp = fopen(file_name, "wb");
