@@ -1,6 +1,4 @@
 
-TODO:
-- make construct_starting_cond a kernel
 right before submitting:
 - remove all commented code
 - remove all test print statements
